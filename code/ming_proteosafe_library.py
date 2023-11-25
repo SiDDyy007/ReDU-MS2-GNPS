@@ -165,7 +165,7 @@ def suspend_task(base_url, task_id, login, password):
 
 def get_task_information(base_url, task_id):
     url = 'https://' + base_url + '/ProteoSAFe/status_json.jsp?task=' + task_id
-    return json.loads(requests.get(url, verify=False).text)
+    return json.loads(requests.get(url, verify=True).text)
 
 def get_task_parameters(base_url, task_id, parameter_blacklist = ['task', 'upload_file_mapping', 'uuid', 'user']):
     params = {}
@@ -258,12 +258,12 @@ def update_user_quota(base_url, login, password, user, quota_name, quota_value):
 #Waits for not running, then returns status
 def wait_for_workflow_finish(base_url, task_id):
     url = 'https://' + base_url + '/ProteoSAFe/status_json.jsp?task=' + task_id
-    json_obj = json.loads(requests.get(url, verify=False).text)
+    json_obj = json.loads(requests.get(url, verify=True).text)
     while (json_obj["status"] != "FAILED" and json_obj["status"] != "DONE" and json_obj["status"] != "SUSPENDED"):
         print("Waiting for task: " + task_id)
         time.sleep(10)
         try:
-            json_obj = json.loads(requests.get(url, verify=False).text)
+            json_obj = json.loads(requests.get(url, verify=True).text)
         except KeyboardInterrupt:
             raise
         except:
