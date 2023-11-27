@@ -13,3 +13,4 @@ numpy
 sklearn
 seaborn
 bokeh==1.4.0
+security~=1.2.0

@@ -1,13 +1,8 @@
 # Import necessary libraries
 import os
 import pandas as pd
-import urllib
-import requests
-import io 
-import sys
 import collections
-import argparse
-from pandas.errors import EmptyDataError
+from security import safe_requests
 
 # Print message to indicate importing is done
 os.system("echo Importing Done!")
@@ -49,7 +44,7 @@ file_paths = collections.defaultdict(list)
 # Download files from the links in the gnps_list and store them locally
 for index, link in enumerate(gnps_list):
   download_url = download_link + link
-  r = requests.get(download_url)
+  r = safe_requests.get(download_url)
   file_name = str(index) + "_gnps_metadata.tsv"
   file_paths["sys_name"].append(file_name)
   file_paths["svr_name"].append(link)
