@@ -97,5 +97,5 @@ def viewfilesattributeattributeterm(attribute, term):
         output_dict["filename"] = metadata_obj["filename"]
         output_list.append(output_dict)
 
-    return json.dumps(output_list)
+    return (json.dumps(output_list), {'Content-Type': 'application/json'})
 

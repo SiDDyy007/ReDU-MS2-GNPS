@@ -578,4 +578,4 @@ def validate():
     except:
         print("Cannot Remove File")
 
-    return json.dumps(validation_dict)
+    return (json.dumps(validation_dict), {'Content-Type': 'application/json'})
