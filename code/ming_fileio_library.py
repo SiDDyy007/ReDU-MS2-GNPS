@@ -78,23 +78,23 @@ def parse_table_with_headers_object_list(filename, delimiter="\t"):
 
 
 def parse_table_without_headers(filename):
-    input_file = open(filename, "r")
+    with open(filename, "r") as input_file:
 
-    line_count = 0
-    column_values = {}
-    for line in input_file:
-        line_splits = line.rstrip().split("\t")
+        line_count = 0
+        column_values = {}
+        for line in input_file:
+            line_splits = line.rstrip().split("\t")
 
-        line_count += 1
-        if line_count == 1:
-            for i in range(len(line_splits)):
-                column_values[i] = []
+            line_count += 1
+            if line_count == 1:
+                for i in range(len(line_splits)):
+                    column_values[i] = []
 
 
-        column_count = 0
-        for line_split in line_splits:
-            column_values[column_count].append(line_split)
-            column_count += 1
+            column_count = 0
+            for line_split in line_splits:
+                column_values[column_count].append(line_split)
+                column_count += 1
 
     return (line_count-1, column_values)
 
