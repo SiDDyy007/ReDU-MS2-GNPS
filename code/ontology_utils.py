@@ -8,8 +8,8 @@ def resolve_ontology(attribute, term):
     if attribute == "ATTRIBUTE_BodyPart":
         url = "https://www.ebi.ac.uk/ols/api/ontologies/uberon/terms?iri=http://purl.obolibrary.org/obo/%s" % (term.replace(":", "_"))
         try:
-            requests.get(url)
-            ontology_json = json.loads(requests.get(url).text)
+            requests.get(url, timeout=60)
+            ontology_json = json.loads(requests.get(url, timeout=60).text)
             #print(json.dumps(ontology_json))
             return ontology_json["_embedded"]["terms"][0]["label"]
         except KeyboardInterrupt:
@@ -20,7 +20,7 @@ def resolve_ontology(attribute, term):
     if attribute == "ATTRIBUTE_Disease":
         url = "https://www.ebi.ac.uk/ols/api/ontologies/doid/terms?iri=http://purl.obolibrary.org/obo/%s" % (term.replace(":", "_"))
         try:
-            ontology_json = requests.get(url).json()
+            ontology_json = requests.get(url, timeout=60).json()
             return ontology_json["_embedded"]["terms"][0]["label"]
         except KeyboardInterrupt:
             raise
@@ -30,7 +30,7 @@ def resolve_ontology(attribute, term):
     if attribute == "ATTRIBUTE_DatasetAccession":
         try:
             url = f"https://massive.ucsd.edu/ProteoSAFe//proxi/v0.1/datasets?filter={term}&function=datasets"
-            dataset_information = requests.get(url).json()
+            dataset_information = requests.get(url, timeout=60).json()
             return dataset_information["title"]
         except KeyboardInterrupt:
             raise

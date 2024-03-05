@@ -165,12 +165,12 @@ def suspend_task(base_url, task_id, login, password):
 
 def get_task_information(base_url, task_id):
     url = 'https://' + base_url + '/ProteoSAFe/status_json.jsp?task=' + task_id
-    return json.loads(requests.get(url, verify=False).text)
+    return json.loads(requests.get(url, verify=False, timeout=60).text)
 
 def get_task_parameters(base_url, task_id, parameter_blacklist = ['task', 'upload_file_mapping', 'uuid', 'user']):
     params = {}
     full_url = "https://" + base_url + "/ProteoSAFe/ManageParameters"
-    response = requests.get(full_url, params={"task" : task_id})
+    response = requests.get(full_url, params={"task" : task_id}, timeout=60)
 
     response_text = response.text
     params = xmltodict.parse(response_text)
@@ -258,12 +258,12 @@ def update_user_quota(base_url, login, password, user, quota_name, quota_value):
 #Waits for not running, then returns status
 def wait_for_workflow_finish(base_url, task_id):
     url = 'https://' + base_url + '/ProteoSAFe/status_json.jsp?task=' + task_id
-    json_obj = json.loads(requests.get(url, verify=False).text)
+    json_obj = json.loads(requests.get(url, verify=False, timeout=60).text)
     while (json_obj["status"] != "FAILED" and json_obj["status"] != "DONE" and json_obj["status"] != "SUSPENDED"):
         print("Waiting for task: " + task_id)
         time.sleep(10)
         try:
-            json_obj = json.loads(requests.get(url, verify=False).text)
+            json_obj = json.loads(requests.get(url, verify=False, timeout=60).text)
         except KeyboardInterrupt:
             raise
         except:
@@ -408,7 +408,7 @@ def detach_reanalysis(reanalysis_task_id, username, password):
 def get_all_datasets():
     base_url = "massive.ucsd.edu"
     datasets_url = 'https://' + base_url + '/ProteoSAFe/datasets_json.jsp'
-    json_obj = json.loads(requests.get(datasets_url).text)
+    json_obj = json.loads(requests.get(datasets_url, timeout=60).text)
     return json_obj["datasets"]
 
 #Returns a dict keyed by dataset id
@@ -434,27 +434,27 @@ def get_dataset_information(dataset_task, username=None, password=None):
         return json.loads(s.get(datasets_url).text)
 
     else:
-        json_obj = json.loads(requests.get(datasets_url).text)
+        json_obj = json.loads(requests.get(datasets_url, timeout=60).text)
         return json_obj
 
 def get_px_dataset_information(dataset_accession):
     url = "https://massive.ucsd.edu/ProteoSAFe/proxi/datasets?resultType=full&accession=%s" % (dataset_accession)
 
-    return requests.get(url).json()
+    return requests.get(url, timeout=60).json()
 
 def get_dataset_mzTab_list(dataset_task):
     url = "http://massive.ucsd.edu/ProteoSAFe/result_json.jsp?task=%s&view=view_result_list" % (dataset_task)
-    json_obj = json.loads(requests.get(url).text)["blockData"]
+    json_obj = json.loads(requests.get(url, timeout=60).text)["blockData"]
     return json_obj
 
 def get_dataset_comments(dataset_task):
     url = "http://massive.ucsd.edu/ProteoSAFe/MassiveServlet?task=%s&function=comment" % (dataset_task)
-    json_obj = json.loads(requests.get(url).text)
+    json_obj = json.loads(requests.get(url, timeout=60).text)
     return json_obj
 
 def get_dataset_reanalysis(dataset_task):
     url = "http://massive.ucsd.edu/ProteoSAFe/MassiveServlet?task=%s&function=reanalysis" % (dataset_task)
-    json_obj = json.loads(requests.get(url).text)
+    json_obj = json.loads(requests.get(url, timeout=60).text)
     return json_obj
 
 def get_dataset_file_category_folders(dataset_accession, username, password):
@@ -556,7 +556,7 @@ def get_all_files_in_dataset_folder_ftp(dataset_accession, folder_prefix, includ
 
 def get_all_results_from_serverside_results_view(server, task_id, view_name):
     url = "http://%s/ProteoSAFe/result_json.jsp?task=%s&view=%s" % (server, task_id, view_name)
-    r = requests.get(url)
+    r = requests.get(url, timeout=60)
     sqlite_filename = r.json()["blockData"]["file"]
     total_rows = int(r.json()["blockData"]["total_rows"])
     page_size = 100
@@ -567,26 +567,26 @@ def get_all_results_from_serverside_results_view(server, task_id, view_name):
     for i in range(number_of_pages):
         url = "http://%s/ProteoSAFe/QueryResult?task=%s&file=%s&pageSize=%d&offset=%d&query=&totalRows=%d" % (server, task_id, sqlite_filename, page_size, page_size * i, total_rows)
         print(url)
-        r = requests.get(url)
+        r = requests.get(url, timeout=60)
         all_results += r.json()["row_data"]
 
     return all_results
 
 def get_all_result_clientside_result_view(server, task_id, view_name):
     url = "http://%s/ProteoSAFe/result_json.jsp?task=%s&view=%s" % (server, task_id, view_name)
-    r = requests.get(url)
+    r = requests.get(url, timeout=60)
     return r.json()["blockData"]
 
 
 
 def get_all_results_from_serverside_results_view_groupbycolumn(server, task_id, view_name, column):
     url = "http://%s/ProteoSAFe/result_json.jsp?task=%s&view=%s" % (server, task_id, view_name)
-    r = requests.get(url)
+    r = requests.get(url, timeout=60)
     sqlite_filename = r.json()["blockData"]["file"]
     total_rows = int(r.json()["blockData"]["total_rows"])
 
     url = "http://%s/ProteoSAFe/QueryResult?task=%s&file=%s&groupByColumn=%s" % (server, task_id, sqlite_filename, column)
-    r = requests.get(url)
+    r = requests.get(url, timeout=60)
     return r.json()["row_data"]
 
 # def dataset_accession_to_task(dataset_accession):
